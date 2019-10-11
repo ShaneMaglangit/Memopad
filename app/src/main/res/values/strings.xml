@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Memopad</string>
+    <string name="note_title_hint">Title</string>
+    <string name="note_desc_hint">Description</string>
+    <string name="note_text_hint">Write here...</string>
+</resources>
