@@ -18,9 +18,12 @@ interface NoteDatabaseDao {
     fun delete(key: Long)
 
     @Query("SELECT * FROM note_table WHERE noteId = :key")
-    fun getNote(key: Long) : Note?
+    fun getNote(key: Long) : Note
 
-    @Query("SELECT * FROM note_table ORDER BY noteId")
+    @Query("SELECT * FROM note_table ORDER BY noteId DESC LIMIT 1")
+    fun getLatestNote() : Note
+
+    @Query("SELECT * FROM note_table ORDER BY noteId DESC")
     fun getAllNotes() : LiveData<List<Note>>
 
 }

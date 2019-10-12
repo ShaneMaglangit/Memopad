@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.memopad.R
 import com.example.memopad.database.NoteDatabase
 import com.example.memopad.databinding.HomeFragmentBinding
+import timber.log.Timber
 
 class HomeFragment : Fragment() {
 
@@ -22,6 +23,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val application = requireNotNull(this.activity).application
         val dataSource = NoteDatabase.getInstance(application).noteDatabaseDao
         val viewModelFactory = HomeViewModelFactory(dataSource, application)
@@ -37,14 +39,24 @@ class HomeFragment : Fragment() {
         binding.recyclerNotesList.adapter = adapter
         binding.setLifecycleOwner(this)
 
-
-        binding.floatingActionButton.setOnClickListener{
-            findNavController().navigate(R.id.action_homeFragment_to_noteFragment)
-        }
-
-        viewModel.allNotes.observe(viewLifecycleOwner, Observer {
+        viewModel.allNotes.observe(this, Observer {
             it?.let {
                 adapter.submitList(it)
+
+                Timber.i("List of Notes updated!")
+            }
+        })
+
+        viewModel.navigateToNoteFragment.observe(this, Observer {note ->
+            note?.let{
+                Timber.i("Opening note #${note.noteId}")
+
+                this.findNavController().navigate(
+                    HomeFragmentDirections
+                        .actionHomeFragmentToNoteFragment(note.noteId)
+                )
+
+                viewModel.doneNavigating()
             }
         })
 
