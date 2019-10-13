@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.memopad.database.Note
 import com.example.memopad.database.NoteDatabaseDao
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class NoteViewModel(private val noteKey: Long = 0L, dataSource: NoteDatabaseDao) : ViewModel() {
 
@@ -18,11 +17,13 @@ class NoteViewModel(private val noteKey: Long = 0L, dataSource: NoteDatabaseDao)
     val navigateToHome: LiveData<Boolean>
         get() = _navigateToHome
 
-    private lateinit var note: Note
+    private val _note = MutableLiveData<Note>()
+    val note: LiveData<Note>
+        get() = _note
 
     init {
         uiScope.launch {
-            note = getNoteFromDatabase()
+            _note.value = getNoteFromDatabase()
         }
     }
 
@@ -32,13 +33,11 @@ class NoteViewModel(private val noteKey: Long = 0L, dataSource: NoteDatabaseDao)
 
     fun saveChanges(title: String, description: String, text: String) {
         uiScope.launch {
-            Timber.i("saveChanges() called")
+            _note.value?.title = title
+            _note.value?.description = description
+            _note.value?.text = text
 
-            note.title = title
-            note.description = description
-            note.text = text
-
-            update(note)
+            update(note.value!!)
 
             _navigateToHome.value = true
         }
@@ -46,15 +45,13 @@ class NoteViewModel(private val noteKey: Long = 0L, dataSource: NoteDatabaseDao)
 
     private suspend fun update(note: Note) {
         withContext(Dispatchers.IO) {
-            Timber.i("Updating...")
             database.update(note)
         }
     }
 
     private suspend fun getNoteFromDatabase() : Note {
         return withContext(Dispatchers.IO) {
-            var note = database.getNote(noteKey)
-            Timber.i("Latest note retrieved from the database.")
+            val note = database.getNote(noteKey)
             note
         }
     }

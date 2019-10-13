@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.memopad.database.Note
 import com.example.memopad.databinding.NoteListItemBinding
 
-class NoteAdapter : ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback()) {
+class NoteAdapter(val noteListener: NoteListener) : ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback()) {
 
     override fun onBindViewHolder(holder: NoteAdapter.ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, noteListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,8 +21,9 @@ class NoteAdapter : ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback()
 
     class ViewHolder private constructor(val binding: NoteListItemBinding) : RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: Note) {
+        fun bind(item: Note, noteListener: NoteListener) {
             binding.note = item
+            binding.clickListener = noteListener
             binding.executePendingBindings()
         }
 
@@ -34,6 +35,10 @@ class NoteAdapter : ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback()
             }
         }
     }
+}
+
+class NoteListener(val clickListener: (noteId: Long) -> Unit) {
+    fun onClick(note: Note) = clickListener(note.noteId)
 }
 
 class NoteDiffCallback : DiffUtil.ItemCallback<Note>() {

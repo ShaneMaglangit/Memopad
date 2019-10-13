@@ -7,12 +7,16 @@
         <variable
             name="note"
             type="com.example.memopad.database.Note" />
+        <variable
+            name="clickListener"
+            type="com.example.memopad.home.NoteListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_card_margin">
+        android:layout_margin="@dimen/default_card_margin"
+        android:onClick="@{() -> clickListener.onClick(note)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,8 +27,8 @@
                 android:id="@+id/txtTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{note.title}"
                 android:textSize="24sp"
+                android:text="@{note.title}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

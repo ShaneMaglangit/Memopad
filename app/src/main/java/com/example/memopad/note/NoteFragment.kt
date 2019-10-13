@@ -14,7 +14,6 @@ import com.example.memopad.R
 import com.example.memopad.database.NoteDatabase
 import com.example.memopad.databinding.NoteFragmentBinding
 import kotlinx.android.synthetic.main.note_fragment.*
-import timber.log.Timber
 
 class NoteFragment : Fragment() {
 
@@ -27,24 +26,19 @@ class NoteFragment : Fragment() {
     ): View? {
 
         val arguments: NoteFragmentArgs by navArgs()
-        Timber.i("arguments initialized")
         val application = requireNotNull(this.activity).application
-        Timber.i("application initialized")
         val dataSource = NoteDatabase.getInstance(application).noteDatabaseDao
-        Timber.i("databaseDao initialized")
         val viewModelFactory = NoteViewModelFactory(arguments.noteKey, dataSource)
-        Timber.i("viewModel factory initialized")
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NoteViewModel::class.java)
-        Timber.i("viewModel initialized")
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.note_fragment, container, false)
 
+        binding.noteViewModel = viewModel
         binding.setLifecycleOwner(this)
 
         binding.floatingActionButton.setOnClickListener {
-            Timber.i("FAB clicked!")
             val title = edit_title.text.toString()
             val description = edit_description.text.toString()
             val text = edit_text.text.toString()

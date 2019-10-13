@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/note_title_hint"
-            android:inputType="text" />
+            android:inputType="text"
+            android:text="@{noteViewModel.note.title}" />
 
         <EditText
             android:id="@+id/edit_description"
@@ -30,7 +31,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/note_desc_hint"
-            android:inputType="text" />
+            android:inputType="text"
+            android:text="@{noteViewModel.note.description}" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -40,6 +42,7 @@
                 android:id="@+id/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:text="@{noteViewModel.note.text}"
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="@string/note_text_hint"

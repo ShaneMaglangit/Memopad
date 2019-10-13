@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.memopad.R
 import com.example.memopad.database.NoteDatabase
 import com.example.memopad.databinding.HomeFragmentBinding
-import timber.log.Timber
 
 class HomeFragment : Fragment() {
 
@@ -27,7 +26,9 @@ class HomeFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = NoteDatabase.getInstance(application).noteDatabaseDao
         val viewModelFactory = HomeViewModelFactory(dataSource, application)
-        val adapter = NoteAdapter()
+        val adapter = NoteAdapter( NoteListener {
+            viewModel.openNote(it)
+        })
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.home_fragment, container, false)
@@ -42,15 +43,11 @@ class HomeFragment : Fragment() {
         viewModel.allNotes.observe(this, Observer {
             it?.let {
                 adapter.submitList(it)
-
-                Timber.i("List of Notes updated!")
             }
         })
 
         viewModel.navigateToNoteFragment.observe(this, Observer {note ->
             note?.let{
-                Timber.i("Opening note #${note.noteId}")
-
                 this.findNavController().navigate(
                     HomeFragmentDirections
                         .actionHomeFragmentToNoteFragment(note.noteId)
