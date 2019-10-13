@@ -10,6 +10,10 @@ import com.example.memopad.databinding.NoteListItemBinding
 
 class NoteAdapter(val noteListener: NoteListener) : ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback()) {
 
+    public override fun getItem(position: Int): Note {
+        return super.getItem(position)
+    }
+
     override fun onBindViewHolder(holder: NoteAdapter.ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, noteListener)

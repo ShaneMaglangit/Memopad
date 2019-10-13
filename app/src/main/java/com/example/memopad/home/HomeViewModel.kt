@@ -35,6 +35,12 @@ class HomeViewModel(dataSource: NoteDatabaseDao, application: Application) : Vie
         }
     }
 
+    fun removeNote(note: Note) {
+        uiScope.launch {
+            delete(note)
+        }
+    }
+
     fun doneNavigating() {
         _navigateToNoteFragment.value = null
     }
@@ -56,6 +62,12 @@ class HomeViewModel(dataSource: NoteDatabaseDao, application: Application) : Vie
     private suspend fun insert(note: Note) {
         withContext(Dispatchers.IO) {
             database.insert(note)
+        }
+    }
+
+    private suspend fun delete(note: Note) {
+        withContext(Dispatchers.IO) {
+            database.delete(note.noteId)
         }
     }
 

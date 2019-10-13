@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.memopad.R
+import com.example.memopad.SwipeToDeleteCallback
 import com.example.memopad.database.NoteDatabase
 import com.example.memopad.databinding.HomeFragmentBinding
 
 class HomeFragment : Fragment() {
-
-    private lateinit var binding: HomeFragmentBinding
-    private lateinit var viewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,15 +26,28 @@ class HomeFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = NoteDatabase.getInstance(application).noteDatabaseDao
         val viewModelFactory = HomeViewModelFactory(dataSource, application)
+
+        val viewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
+
         val adapter = NoteAdapter( NoteListener {
             viewModel.openNote(it)
         })
 
-        binding =
+        val binding: HomeFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.home_fragment, container, false)
 
-        viewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
+
+        val swipeHandler = object: SwipeToDeleteCallback(application.applicationContext) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val note = adapter.getItem(viewHolder.adapterPosition)
+
+                viewModel.removeNote(note)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerNotesList)
 
         binding.homeViewModel = viewModel
         binding.recyclerNotesList.adapter = adapter
