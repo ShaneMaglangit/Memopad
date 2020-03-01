@@ -16,7 +16,7 @@ interface NoteDatabaseDao {
 
     @Query("DELETE FROM note_table WHERE noteId = :key")
     fun delete(key: Long)
-
+ 
     @Query("SELECT * FROM note_table WHERE noteId = :key")
     fun getNote(key: Long) : Note
 
